@@ -1,2 +1,2 @@
 # Blockchain-Crowdfunding
-An implementation of a crowdfunding on the blockchain.
+An implementation of a crowdfunding platform on the Ethereum blockchain.
