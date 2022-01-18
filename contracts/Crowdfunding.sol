@@ -22,8 +22,11 @@ contract Crowdfunding {
     */
     function createNewProject(string calldata _title, string calldata _descr, uint _amountToRaise, uint _numberOfDaysUntilDeadline) external {
         uint deadline = block.timestamp + (_numberOfDaysUntilDeadline * 1 days);
-                
-        Project project = new Project(_title, _descr, _amountToRaise, deadline);
+
+        require(block.timestamp < deadline);
+        require(_amountToRaise > 0);
+
+        Project project = new Project(_title, _descr, _amountToRaise, deadline, payable(msg.sender));
         allProjects.push(project);
 
         emit NewProjectStarted(
@@ -47,16 +50,18 @@ contract Crowdfunding {
 contract Project {
     enum ProjectState { RAISING, RAISED, EXPIRED, REFUNDED }
     
-    string public title;
-    string public descr;
+    string title;
+    string descr;
     
-    address payable public creator; // to pay out
+    address payable creator; // to pay out
     
     ProjectState state;
-    uint public amountToRaise;
-    uint256 public currentBalance;
-    uint public deadline;
-    uint public completedAt;
+    uint amountToRaise;
+    uint256 currentBalance;
+    uint deadline;
+
+    uint completedAt;
+    uint256 balanceAtCompletion;
 
     mapping (address => uint) public fundings;
 
@@ -75,15 +80,21 @@ contract Project {
         _;
     }
 
-    constructor(string memory _title, string memory _descr, uint _amountToRaise, uint _deadline) {
+    modifier inProjectStateMultiple(ProjectState _state, ProjectState _state2) {
+        require(state == _state || state == _state2);
+        _;
+    }
+
+    constructor(string memory _title, string memory _descr, uint _amountToRaise, uint _deadline, address payable _creator) {
         title = _title;
         descr = _descr;
         amountToRaise = _amountToRaise;
         currentBalance = 0;
         deadline = _deadline;
         state = ProjectState.RAISING;
-        creator = payable(msg.sender);
+        creator = _creator;
     }
+
 
     /** 
         description
@@ -91,6 +102,9 @@ contract Project {
         just send the remaining amount and close the project himself. This is like artificially inflating the raised amount which is no bueno.
     */
     function fund() external inProjectState(ProjectState.RAISING) payable {
+        // Can't fund when the time is over
+        require(checkProjectEnded() != true);
+
         require(msg.sender != creator);
 
         fundings[msg.sender] = msg.value;
@@ -99,21 +113,35 @@ contract Project {
 
         emit NewFunding(msg.sender, msg.value, currentBalance);
 
-        checkForPayOut();
+        checkProjectEnded();
     }
+
 
     /**
 
     */
-    function checkForPayOut() public {
-        if (currentBalance >= amountToRaise) {
+    function checkProjectEnded() public returns (bool) {
+        bool amountMet = currentBalance >= amountToRaise;
+        bool timeOver = block.timestamp >= deadline;
+        
+        // TODO: When project is over, expireProject
+
+        if (amountMet) {
             state = ProjectState.RAISED;
             payOut();
-        } else if (block.timestamp > deadline) {
+            
+            return true;
+        } else if (timeOver) {
             state = ProjectState.EXPIRED;
-        }
-        completedAt = block.timestamp;
+            
+            trackCompletion();
+            
+            return true;
+        } else {
+            return false;
+        }   
     }
+
 
     /** 
         description
@@ -122,16 +150,49 @@ contract Project {
        	uint256 _currentBalance = currentBalance;
         currentBalance = 0;
 
-        if (creator.send(_currentBalance)) {
+        bool transactionSuccessful = creator.send(_currentBalance);
+
+        if (transactionSuccessful) {
             emit ProjectRaised(creator, _currentBalance);
+
+            trackCompletion(_currentBalance);
+
             return true;
         } else {
             // revert
             currentBalance = _currentBalance;
             state = ProjectState.RAISED;
+
+            trackCompletion();
+
+            return false;
         }
-        return false;
     }
+
+
+    /**
+    
+    */
+    function trackCompletion() internal inProjectStateMultiple(ProjectState.RAISED, ProjectState.EXPIRED) {
+        // Check is important so that the time doesn't get updated twice
+        if (completedAt == 0) {     
+            balanceAtCompletion = currentBalance;
+            completedAt = block.timestamp;
+        }
+    }
+
+
+    /**
+    
+    */
+    function trackCompletion(uint256 balance) internal inProjectStateMultiple(ProjectState.RAISED, ProjectState.EXPIRED) {
+        // Check is important so that the time doesn't get updated twice
+        if (completedAt == 0) {     
+            balanceAtCompletion = balance;
+            completedAt = block.timestamp;
+        }
+    }
+
 
     /** 
         description
@@ -143,7 +204,9 @@ contract Project {
         uint _amountToRefund = fundings[msg.sender];
         fundings[msg.sender] = 0;
 
-        if (payable(msg.sender).send(_amountToRefund)) {
+        bool transactionSuccessful = payable(msg.sender).send(_amountToRefund);
+
+        if (transactionSuccessful) {
             currentBalance -= _amountToRefund;
         } else {
             // revert
@@ -153,31 +216,37 @@ contract Project {
         return true;
     }
 
+
     /**
         get total contributions view
     */
-    function viewTotalContributions() view public returns(uint256 _viewcurrentBalance) {
-        _viewcurrentBalance = currentBalance;
+    function viewTotalContributions() view public returns(uint256 _currentBalance) {
+        _currentBalance = currentBalance;
     }
+
 
     /**
     
     */
     function viewProject() external view returns(
-        string memory _viewtitle,
-        string memory _viewdescr,
-        address _viewcreator,
-        ProjectState _viewstate,
-        uint _viewamountToRaise,
-        uint256 _viewcurrentBalance,
-        uint _viewdeadline
+        string memory _title,
+        string memory _descr,
+        address _creator,
+        ProjectState _state,
+        uint _amountToRaise,
+        uint256 _currentBalance,
+        uint _deadline,
+        uint _completedAt,
+        uint256 _balanceAtCompletion 
     ) {
-        _viewtitle = title;
-        _viewdescr = descr;
-        _viewcreator = creator;
-        _viewstate = state;
-        _viewamountToRaise = amountToRaise;
-        _viewcurrentBalance = currentBalance;
-        _viewdeadline = deadline;
+        _title = title;
+        _descr = descr;
+        _creator = creator;
+        _state = state;
+        _amountToRaise = amountToRaise;
+        _currentBalance = currentBalance;
+        _deadline = deadline;
+        _completedAt = completedAt;
+        _balanceAtCompletion = balanceAtCompletion;
     }
 }
