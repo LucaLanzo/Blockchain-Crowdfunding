@@ -9,3 +9,7 @@ build
 
 # environment variables
 .env
+
+#mcos data
+**/.DS_Store
+.DS_Store
