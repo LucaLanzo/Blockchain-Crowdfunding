@@ -25,8 +25,8 @@ contract Crowdfunding {
     function createNewProject(string calldata _title, string calldata _descr, uint _amountToRaise, uint _numberOfDaysUntilDeadline) external {
         uint deadline = block.timestamp + (_numberOfDaysUntilDeadline * 1 days);
 
-        require(block.timestamp < deadline);
-        require(_amountToRaise > 0);
+        require(block.timestamp < deadline, "Please choose a time in the future!");
+        require(_amountToRaise > 0, "Please set the amount to be raised over 0 wei!");
 
         Project project = new Project(_title, _descr, _amountToRaise, deadline, payable(msg.sender));
         allProjects.push(project);
@@ -62,8 +62,9 @@ contract Project {
     uint256 currentBalance;
     uint deadline;
 
+    // for logging once project finished
     uint completedAt;
-    uint256 balanceAtCompletion;
+    uint256 completedBalance;
 
     mapping (address => uint) public fundings;
 
@@ -77,16 +78,6 @@ contract Project {
     */
     event ProjectRaised(address creator, uint256 currentBalance);
 
-    modifier inProjectState(ProjectState _state) {
-        require(state == _state);
-        _;
-    }
-
-    modifier inProjectStateMultiple(ProjectState _state, ProjectState _state2) {
-        require(state == _state || state == _state2);
-        _;
-    }
-
     constructor(string memory _title, string memory _descr, uint _amountToRaise, uint _deadline, address payable _creator) {
         title = _title;
         descr = _descr;
@@ -98,110 +89,55 @@ contract Project {
     }
 
 
-    /** 
-        description
-        The first line is very important. Imagine if the project is close to finish and the goal hasn't been quite met yet, the creator could
-        just send the remaining amount and close the project himself. This is like artificially inflating the raised amount which is no bueno.
-    */
-    function fund() external inProjectState(ProjectState.RAISING) payable {
-        // Can't fund when the time is over
-        require(checkProjectEnded() != true);
+    function fund() external payable {
+        require(msg.sender != creator, "The project creator can not fund the project.");
+        
+        // check if projectEnded. This check at the start prevents that another funding happens after the project goal or deadline is met
+        require(state == ProjectState.RAISING, "The project is not raising capital at the moment anymore. Use checkIfProjectEnded to end the project.");
+        // same as the one above, just in case. Require reverts
+        require(checkIfProjectEnded() != true, "The project is not raising capital at the moment anymore. Use checkIfProjectEnded to end the project.");
 
-        require(msg.sender != creator);
-
+        // fund
         fundings[msg.sender] = msg.value;
 
         currentBalance += msg.value;
 
         emit NewFunding(msg.sender, msg.value, currentBalance);
 
-        checkProjectEnded();
+        checkIfProjectEnded();
     }
 
+    function payOut() external {
+       	require(msg.sender == creator, "Only the creator of the project can pay out the raised amount once the funding goal has been met.");
 
-    /**
+        // check if projectEnded and the amount has been met
+        require(checkIfProjectEnded() == true);
+        require(state == ProjectState.RAISED);
 
-    */
-    function checkProjectEnded() public returns (bool) {
-        bool amountMet = currentBalance >= amountToRaise;
-        bool timeOver = block.timestamp >= deadline;
-        
-        // TODO: When project is over, expireProject
-
-        if (amountMet) {
-            state = ProjectState.RAISED;
-            payOut();
-            
-            return true;
-        } else if (timeOver) {
-            state = ProjectState.EXPIRED;
-            
-            trackCompletion();
-            
-            return true;
-        } else {
-            return false;
-        }   
-    }
-
-
-    /** 
-        description
-    */
-    function payOut() internal inProjectState(ProjectState.RAISED) returns (bool) {
-       	uint256 _currentBalance = currentBalance;
+        uint256 _currentBalance = currentBalance;
         currentBalance = 0;
 
         bool transactionSuccessful = creator.send(_currentBalance);
 
         if (transactionSuccessful) {
             emit ProjectRaised(creator, _currentBalance);
-
-            trackCompletion(_currentBalance);
-
-            return true;
         } else {
             // revert
             currentBalance = _currentBalance;
             state = ProjectState.RAISED;
-
-            trackCompletion();
-
-            return false;
         }
     }
 
+    function refund() external {        
+        // just in case. Shouldn't be possible anyway as the creator can not found the project in the first place
+        require(msg.sender != creator); 
 
-    /**
-    
-    */
-    function trackCompletion() internal inProjectStateMultiple(ProjectState.RAISED, ProjectState.EXPIRED) {
-        // Check is important so that the time doesn't get updated twice
-        if (completedAt == 0) {     
-            balanceAtCompletion = currentBalance;
-            completedAt = block.timestamp;
-        }
-    }
-
-
-    /**
-    
-    */
-    function trackCompletion(uint256 balance) internal inProjectStateMultiple(ProjectState.RAISED, ProjectState.EXPIRED) {
-        // Check is important so that the time doesn't get updated twice
-        if (completedAt == 0) {     
-            balanceAtCompletion = balance;
-            completedAt = block.timestamp;
-        }
-    }
-
-
-    /** 
-        description
-    */
-    function refund() public inProjectState(ProjectState.EXPIRED) returns (bool) {
-        // check if sender has even funded the project
+        // check if the method caller has even funded the project
         require(fundings[msg.sender] > 0);
+
+        // check if projectEnded and the deadline was passed
+        require(checkIfProjectEnded() == true);
+        require(state == ProjectState.EXPIRED);
 
         uint _amountToRefund = fundings[msg.sender];
         fundings[msg.sender] = 0;
@@ -213,17 +149,50 @@ contract Project {
         } else {
             // revert
             fundings[msg.sender] = _amountToRefund;
-            return false;
         }
-        return true;
     }
 
+    function checkIfProjectEnded() public returns (bool) {
+        bool amountMet = currentBalance >= amountToRaise;
+        bool timeOver = block.timestamp >= deadline;
+        
+        if (amountMet) {
+            state = ProjectState.RAISED;
+
+            trackCompletion();
+
+            return true;
+        } else if (timeOver) {
+            state = ProjectState.EXPIRED;
+
+            trackCompletion();
+
+            return true;
+        } else {
+            return false;
+        }   
+    }
+
+    function trackCompletion() internal {
+        // if the time hasn't been set before, then track it now else just leave the time which has been set already
+        // this prevents double entries if checkIfProjectEnded is called multiple times
+        if (completedAt == 0) {
+            completedAt = block.timestamp;
+            completedBalance = currentBalance;
+        }
+    }
 
     /**
         get total contributions view
     */
     function viewTotalContributions() view public returns(uint256 _currentBalance) {
-        _currentBalance = currentBalance;
+        // if the project has been finished and has been payed out, the balance will be 0. 
+        // in this case, return the logged balance
+        if (state == ProjectState.RAISED || state == ProjectState.EXPIRED) {
+            _currentBalance = completedBalance;
+        } else {
+            _currentBalance = currentBalance;
+        }
     }
 
 
@@ -239,7 +208,7 @@ contract Project {
         uint256 _currentBalance,
         uint _deadline,
         uint _completedAt,
-        uint256 _balanceAtCompletion 
+        uint256 _completedBalance
     ) {
         _title = title;
         _descr = descr;
@@ -249,6 +218,6 @@ contract Project {
         _currentBalance = currentBalance;
         _deadline = deadline;
         _completedAt = completedAt;
-        _balanceAtCompletion = balanceAtCompletion;
+        _completedBalance = completedBalance;
     }
 }
