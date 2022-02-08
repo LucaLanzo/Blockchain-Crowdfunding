@@ -26,14 +26,14 @@ function Header() {
         </p>
       <div className='bcsc__header-content__input'>
         <div className='input_wrapper'>
-        <input type='input' placeholder='Title' onChange={event => setTitle(event.target.value)}/>
-        <input type='input' placeholder='Description' onChange={event => setDescr(event.target.value)}/>
+        <input type='text' placeholder='Title' onChange={event => setTitle(event.target.value)}/>
+        <input type='text' placeholder='Description' onChange={event => setDescr(event.target.value)}/>
         <input type='input' placeholder='Goal in Wei' onChange={event => setGoal(event.target.value)}/>
-        <input type='input' placeholder='Time in days' onChange={event => setDeadline(event.target.value)} />
+        <input type='number' placeholder='Time in days' onChange={event => setDeadline(event.target.value)} />
         </div>
         <div className='button_wrapper'>
          <button className='rotate-center' type='button' 
-        //  onClick={() => createNewProjectMethod()}
+         onClick={() => createNewProjectMethod()}
          >
          Create Project
          </button>
