@@ -7,12 +7,12 @@ import './projectOverview.css'
 const ProjectOverview = () => { 
   const[projectContractsView, setProjectContractsView] = useState({})
   
-  useEffect(() => {
-    getAllProjects()
-    .then(tx => 
-      console.log(tx)
-    )
-  }, [])
+  // useEffect(() => {
+    // getAllProjects()
+    // .then(tx => 
+    //   console.log(tx)
+    // )
+  // }, [])
 
   return (
   

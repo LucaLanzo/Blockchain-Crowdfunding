@@ -5,9 +5,9 @@ import { init, getAllProjects } from './web3/Web3Client'
 import './App.css'
 
 const App = () => {
-  useEffect(() => {
-    init();
-  }, []);
+  // useEffect(() => {
+  //   init();
+  // }, []);
   
   return (
   <div className='App' id='home'>
