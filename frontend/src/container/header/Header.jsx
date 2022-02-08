@@ -25,14 +25,22 @@ function Header() {
         Deploy a new Project with Blockfund
         </p>
       <div className='bcsc__header-content__input'>
-        <input type='input' placeholder='Title' onChange={event => setTitle(event.target.value)}/>
-        <input type='input' placeholder='Description' onChange={event => setDescr(event.target.value)}/>
+        <div className='input_wrapper'>
+        <input type='text' placeholder='Title' onChange={event => setTitle(event.target.value)}/>
+        <input type='text' placeholder='Description' onChange={event => setDescr(event.target.value)}/>
         <input type='input' placeholder='Goal in Wei' onChange={event => setGoal(event.target.value)}/>
-        <input type='input' placeholder='Time in days' onChange={event => setDeadline(event.target.value)} />
-        
-        <button type='button' onClick={() => createNewProjectMethod()}>Create Project</button>
+        <input type='number' placeholder='Time in days' onChange={event => setDeadline(event.target.value)} />
+        </div>
+        <div className='button_wrapper'>
+         <button className='rotate-center' type='button' 
+         onClick={() => createNewProjectMethod()}
+         >
+         Create Project
+         </button>
+        </div>
       </div>
       </div>
+
       <div className='bcsc__header-image'>
           <img src={blockchain} alt='blockchain'/>
         </div>
