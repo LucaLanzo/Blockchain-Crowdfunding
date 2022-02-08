@@ -10,12 +10,11 @@ function Header() {
           Invest with Crypto in your favourite Projects!
         </h1>
         <p>
-        Get notifyed about new projects enter E-Mail address bla bla
-        sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        Deploy a new Project with Blockfund
         </p>
       <div className='bcsc__header-content__input'>
-        <input type='email' placeholder='Your E-mail' />
-        <button type='button'>Get Started</button>
+        <input type='input' placeholder='Hello' />
+        <button type='button'>Create Project</button>
       </div>
       </div>
       <div className='bcsc__header-image'>

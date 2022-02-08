@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, Footer, WhatFund} from './container';
+import { Header, Footer, WhatFund, ProjectOverview} from './container';
 import {Navbar, Build} from './components';
 import './App.css'
 
@@ -9,7 +9,9 @@ const App = () => {
   <div className='gradient__bg'>
     <Navbar />
     <Header />
+    <ProjectOverview />
   </div>
+
   <div className='gradient__bg'>
     <WhatFund />
     <Build />

@@ -1,0 +1,58 @@
+.bcsc__projectOverview {
+    display: flex;
+    flex-direction: column;    
+}
+
+.bcsc__projectOverview-heading {
+    width: 100%;
+    text-align: left;
+
+    margin-bottom: 5rem;
+}
+
+.bcsc__projectOverview-heading h1 {
+    font-size: 55px;
+    line-height: 65px;
+    font-family: var(--font-family);
+    font-weight: 800;
+}
+
+.bcsc__projectOverview-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.bcsc__projectOverview-container_group {
+    flex: 1;
+    margin-right: 2rem;
+}
+
+
+
+@media screen and (max-width: 990px) {
+    .bcsc__projectOverview-container {
+        flex-direction: column-reverse;
+    }
+
+
+    .bcsc__projectOverview-container_group {
+        margin: 2rem 0;
+    }   
+
+}
+
+@media screen and (max-width: 700px) {
+
+    .bcsc__projectOverview-heading h1 {
+        font-size: 46px;
+        line-height: 52px;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .bcsc__projectOverview-heading h1 {
+        font-size: 34px;
+        line-height: 42px;
+    }
+
+}
