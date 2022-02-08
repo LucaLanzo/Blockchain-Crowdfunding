@@ -58,6 +58,10 @@ export const init = async () => {
 // }
 
 
+
+/*
+ * Once subscribed, creates a new project with the given data
+ */
 export const createNewProject = async (title, descr, goal, deadline) => {
   if (!isInitialised) {
     await init();
@@ -75,27 +79,47 @@ export const createNewProject = async (title, descr, goal, deadline) => {
     });
 }
 
-
-export const getAllProjects = async () => {
+/*
+ * once subscribed, returns list of all project contract addresses
+ */
+export const getAllProjectAddresses = async () => {
   if (!isInitialised) {
     await init();
   }
   
-  crowdfundingContract.methods.viewAllProjects().call().then((projects) => {
-    let projectContractsView = []
-    projects.forEach((address) => {
-      let projectContract = new web3.eth.Contract(ProjectContractBuild.abi, address);
-
-      projectContract.methods.viewProject().call().then((details) => {
-        const projectView = details;
-        projectView.projectAddress = address;
-        
-        projectContractsView.push(projectView);
-      });
-    });
-    return projectContractsView;
-  });
+  return crowdfundingContract.methods.viewAllProjects().call();
 }
+
+/*
+ * once subscribed, returns list of all project contracts
+ */
+export const getAllProjectContracts = async (projectAddresses) => {
+  let projectContracts = []
+
+  for (var i = 0; i < projectAddresses.length; i++) {
+    projectContracts.push(new web3.eth.Contract(ProjectContractBuild.abi, projectAddresses[i]));
+  }
+
+  return projectContracts;
+}
+
+
+export const getProjectView = async (projectContract) => {
+  projectContract.methods.viewProject().call().then(projectView => {
+    return projectView;
+  })
+}
+
+
+// projectContract.methods.viewProject().call().then((details) => {
+//  const projectView = details;
+
+//  console.log(projectView);
+
+//  projectView.projectAddress = address;
+
+//  projectContractsView.push(projectView);
+//     });
 
 
 
