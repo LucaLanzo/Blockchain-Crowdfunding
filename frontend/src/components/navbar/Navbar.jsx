@@ -17,7 +17,7 @@ function Navbar() {
   return <div className='bcsc__navbar'>
   <div className='bcsc__navbar-links'>
   <div className='bcsc__navbar-links_logo'>
-  <img className='bcsc__navbar-links_logo' src={logo} />
+  <img className='bcsc__navbar-links_logo' src={logo} alt=""/>
    </div>
    <div className='bcsc__navbar-links_container'>
      <Menu />

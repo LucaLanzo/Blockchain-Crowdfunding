@@ -28,7 +28,7 @@ contract Crowdfunding {
         require(block.timestamp < deadline, "Please choose a time in the future.");
         require(_amountToRaise > 0, "Please set the amount to be raised over 0 wei.");
 
-        Project project = new Project(_title, _descr, _amountToRaise, deadline, payable(msg.sender));
+        Project project = new Project(_title, _descr, _amountToRaise, deadline, payable(msg.sender), block.timestamp);
         allProjects.push(project);
 
         emit NewProjectStarted(
@@ -61,6 +61,7 @@ contract Project {
     uint amountToRaise;
     uint256 currentBalance;
     uint deadline;
+    uint startedAt;
 
     // for logging once project finished
     uint completedAt;
@@ -78,7 +79,7 @@ contract Project {
     */
     event ProjectPayedOut(address creator, uint256 currentBalance);
 
-    constructor(string memory _title, string memory _descr, uint _amountToRaise, uint _deadline, address payable _creator) {
+    constructor(string memory _title, string memory _descr, uint _amountToRaise, uint _deadline, address payable _creator, uint _startedAt) {
         title = _title;
         descr = _descr;
         amountToRaise = _amountToRaise;
@@ -86,6 +87,7 @@ contract Project {
         deadline = _deadline;
         state = ProjectState.RAISING;
         creator = _creator;
+        startedAt = _startedAt;
     }
 
 
@@ -215,6 +217,7 @@ contract Project {
         uint _amountToRaise,
         uint256 _currentBalance,
         uint _deadline,
+        uint _startedAt,
         uint _completedAt,
         uint256 _completedBalance
     ) {
@@ -225,6 +228,7 @@ contract Project {
         _amountToRaise = amountToRaise;
         _currentBalance = currentBalance;
         _deadline = deadline;
+        _startedAt = startedAt;
         _completedAt = completedAt;
         _completedBalance = completedBalance;
     }
