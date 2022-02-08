@@ -10,10 +10,10 @@ function Header() {
   const [goal, setGoal] = useState(0);
   const [deadline, setDeadline] = useState(0);
 
+  const [latestEvent, setlatestEvent] = useState({});
+
   const createNewProjectMethod = () => {
     const newProjectEvent = createNewProject(title, descr, goal, deadline);
-    console.log("header new project result");
-    console.log(newProjectEvent);
   }
 
   return <div className='bcsc__header section__padding' id='home'>

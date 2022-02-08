@@ -24,11 +24,11 @@ const ProjectOverview = () => {
     for (var i = 0; i < projectContracts.length; i++) {
       getProjectView(projectContracts[i])
       .then(tx => 
-        projectViewsLocal.push(tx)
+        console.log(tx)
       )
     }
     setProjectViews(projectViewsLocal);
-    
+
   }, [JSON.stringify(projectAddresses)])
 
   return (

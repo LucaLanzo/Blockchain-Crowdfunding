@@ -105,9 +105,7 @@ export const getAllProjectContracts = async (projectAddresses) => {
 
 
 export const getProjectView = async (projectContract) => {
-  projectContract.methods.viewProject().call().then(projectView => {
-    return projectView;
-  })
+  return projectContract.methods.viewProject().call()
 }
 
 
