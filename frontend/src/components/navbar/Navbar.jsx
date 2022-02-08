@@ -14,15 +14,12 @@ const Menu = () =>(
 
 function Navbar() {
   const [toggleMenu, setToggleMenu] = useState(false);
-  const [toggleConnect, setToggleConnect] = useState(true);
-
+  
   const connectWallet = () => {
     init().then(tx => {
       console.log(tx);
-      setToggleConnect(false);
     }).catch(err => {
       console.log(err);
-      setToggleConnect(true);
     })
   }
 
@@ -35,11 +32,10 @@ function Navbar() {
      <Menu />
    </div>
    </div>
-  {toggleConnect&&
-    <div className='bcsc__navbar-connect'>
+  <div className='bcsc__navbar-connect'>
       <button type='button' onClick={() => connectWallet()}>Connect Wallet</button>
     </div>
-  }
+  
    <div className='bcsc__navbar-menu'>
   {toggleMenu
   ? <RiCloseLine color='#fff' size={27} onClick={() => setToggleMenu(false)}/>
@@ -50,9 +46,8 @@ function Navbar() {
       <div className='bcsc__navbar-menu_container-links'>
       <Menu />
       <div className='bcsc__navbar-menu_container-links-connect'>
-      {toggleConnect&&
-        <button type='button' onClick={() => connectWallet()}>Connect Wallet</button>
-      }
+      <button type='button' onClick={() => connectWallet()}>Connect Wallet</button>
+      
     </div>
   </div>
   </div>
