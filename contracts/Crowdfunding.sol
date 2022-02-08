@@ -77,7 +77,7 @@ contract Project {
     /**
     
     */
-    event ProjectPayedOut(address creator, uint256 currentBalance);
+    event ProjectPaidOut(address creator, uint256 currentBalance);
 
     constructor(string memory _title, string memory _descr, uint _amountToRaise, uint _deadline, address payable _creator, uint _startedAt) {
         title = _title;
@@ -124,7 +124,7 @@ contract Project {
 
         if (transactionSuccessful) {
             state = ProjectState.PAYOUT;
-            emit ProjectPayedOut(creator, _currentBalance);
+            emit ProjectPaidOut(creator, _currentBalance);
         } else {
             // revert
             currentBalance = _currentBalance;
