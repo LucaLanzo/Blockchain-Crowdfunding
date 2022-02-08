@@ -37,6 +37,10 @@ const ProjectOverview = () => {
       <div className="bcsc__projectOverview-heading">
         <h1 className="gradient__text">Take a look at the <br /> deployed projects.</h1>
       </div>
+      <div className='refresh_wrapper'>
+      <button className='refresh' onClick={() => window.location.reload(false)}>Click to reload!</button>
+
+      </div>
 
       {
         console.log(projectAddresses)
@@ -63,4 +67,3 @@ const ProjectOverview = () => {
 }
 
 export default ProjectOverview;
-
