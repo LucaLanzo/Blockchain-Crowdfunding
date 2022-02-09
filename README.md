@@ -22,4 +22,4 @@ Start a new crowdfunding project or check out existing projects using the refres
 
 ![image](https://user-images.githubusercontent.com/40578534/153139908-a71dfc41-86a2-4b6a-866f-e2b0f5c5ffd1.png)
 
-For questions, write to Luca Lanzo. Enjoy :)
+Enjoy! :)
