@@ -1,5 +1,5 @@
 # Blockfunding
-![image](https://user-images.githubusercontent.com/40578534/153140023-b8ff8325-d48f-4381-867f-e33b4c2e6bde.png)
+![Blockfunding_Logo](https://user-images.githubusercontent.com/40578534/153142059-3caba755-2b82-4404-b768-08bfd238ac51.png)
 An implementation of a crowdfunding smart contract on the Ethereum blockchain.  
 Includes a ReactJS frontend with a Web3 component to bridge the frontend with the smart contract.
 
