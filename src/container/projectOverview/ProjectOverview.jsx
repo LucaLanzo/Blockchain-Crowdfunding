@@ -170,16 +170,16 @@ const ProjectOverview = () => {
               
               {/* Render fund button only when not creator and state is raising */
                 (new String(selectedAccount).valueOf().toLowerCase() !== new String(project._creator).valueOf().toLowerCase() && 0 == parseInt(project._state)) && (
-                  <div>
-                    <input type='number' min="1" placeholder='Funding in Wei' onChange={event => setFundingAmount(event.target.value)} />
-                    <button onClick={() => fundMethod(project._projectAddress, fundingAmount)}>Fund!</button>
+                  <div className='fund_wrapper'>
+                    <input className='fund_input' type='number' min="1" placeholder='Funding in Wei' onChange={event => setFundingAmount(event.target.value)} />
+                    <button className='project_button_fund' onClick={() => fundMethod(project._projectAddress, fundingAmount)}>Fund</button>
                   </div>
                 )
               }
               {/* Render payout button only when creator and state is raised */
                 (new String(selectedAccount).valueOf().toLowerCase() == new String(project._creator).valueOf().toLowerCase() && 1 == parseInt(project._state)) && (
                   <div className='refresh_wrapper'>
-                    <button className='refresh' onClick={() => payoutMethod(project._projectAddress)}>PayOut</button>
+                    <button className='project_button_payout' onClick={() => payoutMethod(project._projectAddress)}>PayOut</button>
                   </div>
                 )
               }
@@ -188,7 +188,7 @@ const ProjectOverview = () => {
               {/* Render refund button only when not creator and state is expired */
                 (new String(selectedAccount).valueOf().toLowerCase() !== new String(project._creator).valueOf().toLowerCase() && 2 == parseInt(project._state)) && (
                   <div className='refresh_wrapper'>
-                      <button className='refresh' onClick={() => refundMethod(project._projectAddress)}>Refund</button>
+                      <button className='project_button_payout' onClick={() => refundMethod(project._projectAddress)}>Refund</button>
                   </div>
                 )
               }
