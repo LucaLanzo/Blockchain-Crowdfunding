@@ -100,7 +100,7 @@ contract Project {
         require(checkIfProjectEnded() != true, "The project is not raising capital at the moment anymore. Use checkIfProjectEnded to end the project.");
 
         // fund
-        fundings[msg.sender] = msg.value;
+        fundings[msg.sender] += msg.value;
 
         currentBalance += msg.value;
 
