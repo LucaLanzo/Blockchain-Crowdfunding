@@ -37,7 +37,8 @@ contract Crowdfunding {
             address(project),
             msg.sender, 
             _amountToRaise, 
-            deadline);
+            deadline
+        );
     }
 
     /** 
@@ -63,9 +64,12 @@ contract Project {
     uint deadline;
     uint startedAt;
 
+    address public projectAddress;
+
     // for logging once project finished
     uint completedAt;
     uint256 completedBalance;
+
 
     mapping (address => uint) public fundings;
 
@@ -88,6 +92,7 @@ contract Project {
         state = ProjectState.RAISING;
         creator = _creator;
         startedAt = _startedAt;
+        projectAddress = address(this);
     }
 
 
@@ -219,7 +224,8 @@ contract Project {
         uint _deadline,
         uint _startedAt,
         uint _completedAt,
-        uint256 _completedBalance
+        uint256 _completedBalance,
+        address _projectAddress
     ) {
         _title = title;
         _descr = descr;
@@ -231,5 +237,6 @@ contract Project {
         _startedAt = startedAt;
         _completedAt = completedAt;
         _completedBalance = completedBalance;
+        _projectAddress = projectAddress;
     }
 }
