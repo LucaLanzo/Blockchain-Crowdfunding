@@ -159,6 +159,10 @@ contract Project {
             // revert
             fundings[msg.sender] = _amountToRefund;
         }
+
+        if (currentBalance == 0) {
+            state = ProjectState.REFUNDED;
+        }
     }
 
     function checkIfProjectEnded() public returns (bool) {
