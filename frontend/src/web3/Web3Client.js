@@ -1,6 +1,6 @@
 import Web3 from 'web3';
-import CrowdfundingContractBuild from './abis/Crowdfunding.json'
-import ProjectContractBuild from './abis/Project.json'
+import CrowdfundingContractBuild from '../../../build/contracts/Crowdfunding.json'
+import ProjectContractBuild from '../../../build/contracts/Project.json'
 
 
 export let selectedAccount;
@@ -30,7 +30,7 @@ export const init = async () => {
     window.ethereum.on('accountsChanged', function (accounts) {
       selectedAccount = accounts[0];
       console.log(`Selected account changed to ${selectedAccount}`);
-    });  
+    });
   }
 
   web3 = new Web3(provider);
@@ -44,19 +44,6 @@ export const init = async () => {
 
   isInitialised = true;
 }
-
-
-// async function getCrowdfundingContract() {
-//   if (!isInitialised) {
-//     await init();
-//   }
-  
-//   crowdfundingContract = new web3.eth.Contract(
-//     CrowdfundingContractBuild.abi,
-//     CrowdfundingContractBuild.network[networkId].address
-//   );
-// }
-
 
 
 /*
@@ -103,6 +90,12 @@ export const getAllProjectContracts = async (projectAddresses) => {
   return projectContracts;
 }
 
+
+export const getSingleProjectContract = async (projectAddress) => {
+  return new web3.eth.Contract(ProjectContractBuild.abi, projectAddress);
+}
+
+
 /*
  * once subscribed, returns list of all project views
  */
@@ -113,25 +106,50 @@ export const getAllProjectViews = async (projectContracts) => {
     for (var i = 0; i < projectContracts.length; i++) {
       projectViews.push(await projectContracts[i].methods.viewProject().call())
     }
-  } else {
-    console.log("skip")
   }
   
   return projectViews;
 }
 
 
-// projectContract.methods.viewProject().call().then((details) => {
-//  const projectView = details;
+export const fund = async (projectContract, fundingAmount) => {
+  projectContract.methods
+  .fund()
+  .send({
+    from: selectedAccount,
+    value: fundingAmount
+  })
+  .then((res) => {
+    const newFundingEvent = res.events.NewFunding.returnValues;
+    // promise
+    return newFundingEvent;
+  });
+}
 
-//  console.log(projectView);
+export const payout = async (projectContract) => {
+  projectContract.methods
+  .payOut()
+  .send({
+    from: selectedAccount
+  })
+  .then((res) => {
+    const payOutEvent = res.events.ProjectPaidOut.returnValues;
+    // promise
+    return payOutEvent;
+  });
+}
 
-//  projectView.projectAddress = address;
+export const refund = async (projectContract) => {
+  projectContract.methods
+  .refund()
+  .send({
+    from: selectedAccount
+  })
+  .then(() => {});
+}
 
-//  projectContractsView.push(projectView);
-//     });
-
-
-
-
-
+export const checkIfProjectEnded = async (projectContract) => {
+  return projectContract.methods.checkIfProjectEnded().send({
+    from: selectedAccount
+  });
+}
