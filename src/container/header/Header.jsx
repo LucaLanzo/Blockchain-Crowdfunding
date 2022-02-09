@@ -11,9 +11,9 @@ function Header() {
   const [deadline, setDeadline] = useState(0);
 
   const createNewProjectMethod = () => {
-    if (goal < 0) {
+    if (goal <= 0) {
       window.alert("Please choose a goal higher than 1!");
-    } else if (deadline < 0) {
+    } else if (deadline <= 0) {
       window.alert("Please choose days higher than 1!");
     } else if (!(goal > 0 && deadline > 0 && title !== "" && descr !== "")) {
       window.alert("Please fix your input!");

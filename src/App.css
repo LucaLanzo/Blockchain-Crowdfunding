@@ -10,8 +10,10 @@ body{
 }
 
 a{
-    color: unset;
+    font-family: var(--font-family);
     text-decoration: none;
+    color: rgb(226, 226, 226);
+    font-weight:6000;
 }
 
 .gradient__bg{

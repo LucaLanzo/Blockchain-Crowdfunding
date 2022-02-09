@@ -20,6 +20,8 @@ const ProjectOverview = () => {
 
   const [fundingAmount, setFundingAmount] = useState(0);
   
+  const MINUTE_MS = 5000;
+
   useEffect(() => {
     getAllProjectAddresses()
     .then(tx => 
@@ -94,17 +96,21 @@ const ProjectOverview = () => {
   }
 
   const fundMethod = (projectAddress, fundingAmount) => {
-    let projectContract;
+    if (fundingAmount <= 0) {
+      window.alert("Please choose a funding amount higher than 1!");
+    } else {
+      let projectContract;
     
-    for (var i = 0; i < projectContracts.length; i++) {
-      if (projectContracts[i]._address == projectAddress) {
-        projectContract = projectContracts[i]
+      for (var i = 0; i < projectContracts.length; i++) {
+        if (projectContracts[i]._address == projectAddress) {
+          projectContract = projectContracts[i]
+        }
       }
+  
+      fund(projectContract, fundingAmount);
+  
+      setFundingAmount(0);
     }
-
-    fund(projectContract, fundingAmount);
-
-    setFundingAmount(0);
 
     getAllProjectViewsMethod();
   }
@@ -162,7 +168,7 @@ const ProjectOverview = () => {
             
             <div className="bcsc__projectOverview-container_group">
               
-              {/* Render fund button only when not creator and state is raising*/
+              {/* Render fund button only when not creator and state is raising */
                 (new String(selectedAccount).valueOf().toLowerCase() !== new String(project._creator).valueOf().toLowerCase() && 0 == parseInt(project._state)) && (
                   <div>
                     <input type='number' min="1" placeholder='Funding in Wei' onChange={event => setFundingAmount(event.target.value)} />
@@ -193,6 +199,6 @@ const ProjectOverview = () => {
       </div>
     </div>
   );
-}
+} 
 
 export default ProjectOverview;
