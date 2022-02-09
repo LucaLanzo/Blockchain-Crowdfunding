@@ -12,7 +12,7 @@ const ProjectOverview = () => {
   states.set(1, 'Raised');
   states.set(2, 'Expired');
   states.set(3, 'Refunded');
-  states.set(4, 'Payout');
+  states.set(4, 'Paid Out');
 
   const [projectAddresses, setProjectAddresses] = useState({});
   const [projectContracts, setProjectContracts] = useState({});

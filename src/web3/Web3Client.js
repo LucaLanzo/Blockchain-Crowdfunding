@@ -1,6 +1,6 @@
 import Web3 from 'web3';
-import CrowdfundingContractBuild from '../../../build/contracts/Crowdfunding.json'
-import ProjectContractBuild from '../../../build/contracts/Project.json'
+import CrowdfundingContractBuild from 'buildcontractsfolder/Crowdfunding.json'
+import ProjectContractBuild from 'buildcontractsfolder/Project.json'
 
 
 export let selectedAccount;
@@ -23,6 +23,7 @@ export const init = async () => {
       })
       .catch((err) => {
         console.log(err);
+        isInitialised = false;
         return;
       });
 
@@ -41,7 +42,7 @@ export const init = async () => {
     CrowdfundingContractBuild.abi,
     CrowdfundingContractBuild.networks[networkId].address
   );
-
+  
   isInitialised = true;
 }
 
@@ -50,10 +51,17 @@ export const init = async () => {
  * Once subscribed, creates a new project with the given data
  */
 export const createNewProject = async (title, descr, goal, deadline) => {
+  console.log(!isInitialised);
   if (!isInitialised) {
     await init();
+    return;
   }
   
+  if (crowdfundingContract == null) {
+    await init();
+    return;
+  }
+
   crowdfundingContract.methods
     .createNewProject(title, descr, goal, deadline)
     .send({
@@ -82,9 +90,11 @@ export const getAllProjectAddresses = async () => {
  */
 export const getAllProjectContracts = async (projectAddresses) => {
   let projectContracts = []
-
-  for (var i = 0; i < projectAddresses.length; i++) {
-    projectContracts.push(new web3.eth.Contract(ProjectContractBuild.abi, projectAddresses[i]));
+  
+  if (projectAddresses !== null && projectAddresses.length > 0) {
+    for (var i = 0; i < projectAddresses.length; i++) {
+      projectContracts.push(new web3.eth.Contract(ProjectContractBuild.abi, projectAddresses[i]));
+    }
   }
 
   return projectContracts;
@@ -102,7 +112,7 @@ export const getSingleProjectContract = async (projectAddress) => {
 export const getAllProjectViews = async (projectContracts) => {
   let projectViews = [];
 
-  if (projectContracts !== 0) {
+  if (projectContracts !== null  && projectContracts.length > 0) {
     for (var i = 0; i < projectContracts.length; i++) {
       projectViews.push(await projectContracts[i].methods.viewProject().call())
     }
