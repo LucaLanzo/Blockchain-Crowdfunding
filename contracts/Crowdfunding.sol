@@ -2,16 +2,16 @@
 
 pragma solidity ^0.8.11;
 
-/** @title Blockfunding crowdfunding
-    @notice A smart contract for development purposes, ready to be used in a crowdfunding application using the Ethereum blockchain
-*/
+// @title Blockfunding crowdfunding
+//    @notice A smart contract for development purposes, ready to be used in a crowdfunding application using the Ethereum blockchain
+//
 contract Crowdfunding {
     Project[] private allProjects;
 
 
-    /**
-        Event triggered for new projects that have been started
-    */
+    //
+    //    Event triggered for new projects that have been started
+    //
     event NewProjectStarted(
         string title, 
         string descr,
@@ -21,11 +21,11 @@ contract Crowdfunding {
         uint deadline
     );
 
-    /** 
-        Starts a new project, does some checks to prevent bad input, pushes it to a list and emits an event
-        @param title, description, funding goal, deadline in full days
-        @return none
-    */
+    // 
+    //    Starts a new project, does some checks to prevent bad input, pushes it to a list and emits an event
+    //    @param title, description, funding goal, deadline in full days
+    //    @return none
+    //
     function createNewProject(string calldata _title, string calldata _descr, uint _amountToRaise, uint _numberOfDaysUntilDeadline) external {
         uint deadline = block.timestamp + (_numberOfDaysUntilDeadline * 1 days);
 
@@ -45,12 +45,12 @@ contract Crowdfunding {
         );
     }
 
-    /** 
-        Returns all started projects as a list of addresses
-        @param none
-        @return list of project addresses
-        @notice does not return the contracts but only string literals/addresses
-    */
+    // 
+    //    Returns all started projects as a list of addresses
+    //    @param none
+    //    @return list of project addresses
+    //   @notice does not return the contracts but only string literals/addresses
+    //
     function viewAllProjects() external view returns(Project[] memory) {
         return allProjects;
     }
@@ -80,14 +80,14 @@ contract Project {
 
     mapping (address => uint) public fundings;
 
-    /**
-        Event triggered for new fundings
-    */
+    //
+    //    Event triggered for new fundings
+    //
     event NewFunding(address sender, uint amount, uint currentBalance);
 
-    /**
-        Event triggered when a crowdfunding was successful and the balance has been paid to the creator
-    */
+    //
+    //    Event triggered when a crowdfunding was successful and the balance has been paid to the creator
+    //
     event ProjectPaidOut(address creator, uint256 currentBalance);
 
     constructor(string memory _title, string memory _descr, uint _amountToRaise, uint _deadline, address payable _creator, uint _startedAt) {
@@ -102,12 +102,12 @@ contract Project {
         projectAddress = address(this);
     }
 
-    /**
-        Method to contribute to a crowdfunding project. Takes several measures to avoid malpractice. 
-        Checks include state checking, caller checks and also a check which avoids double payment
-        @param none
-        @return none
-    */
+    //
+    //    Method to contribute to a crowdfunding project. Takes several measures to avoid malpractice. 
+    //    Checks include state checking, caller checks and also a check which avoids double payment
+    //    @param none
+    //    @return none
+    //
     function fund() external payable {
         require(msg.sender != creator, "The project creator can not fund the project.");
         
@@ -126,11 +126,11 @@ contract Project {
         checkIfProjectEnded();
     }
 
-    /**
-        Once a crowdfunding goal has been met, the creator can pay himself the balance
-        @param None
-        @return None, only an event is emitted
-    */
+    //
+    //    Once a crowdfunding goal has been met, the creator can pay himself the balance
+    //    @param None
+    //    @return None, only an event is emitted
+    //
     function payOut() external {
        	require(msg.sender == creator, "Only the creator of the project can pay out the raised amount once the funding goal has been met.");
 
@@ -154,11 +154,11 @@ contract Project {
         }
     }
 
-    /**
-        Once a project reaches it's deadline and the funding goal hasn't been met, the backers can each refund their contributions
-        @param None
-        @return Only money :)
-    */
+    //
+    //    Once a project reaches it's deadline and the funding goal hasn't been met, the backers can each refund their contributions
+    //    @param None
+    //    @return Only money :)
+    //
     function refund() external {        
         // shouldn't be possible anyway as the creator can not fund the project in the first place, but should revert with a good error message
         require(msg.sender != creator, "Only the backers of the project can refund their raised amount if the goal hasn't been met."); 
@@ -187,13 +187,13 @@ contract Project {
         }
     }
 
-    /**
-        Helper function, to check whether a project is funded or has reached its deadline. Will also track the time when the project has been completed
-        @param None
-        @return boolean, true for project end, false for still ongoing
-        @dev this method is mostly called from inside the other functions. In the frontend, the view at the bottom (which returns the projects data) is used
-        to display the project's state
-    */
+    //
+    //    Helper function, to check whether a project is funded or has reached its deadline. Will also track the time when the project has been completed
+    //    @param None
+    //    @return boolean, true for project end, false for still ongoing
+    //    @dev this method is mostly called from inside the other functions. In the frontend, the view at the bottom (which returns the projects data) is used
+    //    to display the project's state
+    //
     function checkIfProjectEnded() public returns (bool) {
         bool amountMet = currentBalance >= amountToRaise;
         bool timeOver = block.timestamp >= deadline;
@@ -217,9 +217,9 @@ contract Project {
         }   
     }
 
-    /**
-        Tracks the time and last amount once a project is funded or expired
-    */
+    //
+    //   Tracks the time and last amount once a project is funded or expired
+    //
     function trackCompletion() internal {
         // if the time hasn't been set before, then track it now else just leave the time which has been set already
         // this prevents double entries if checkIfProjectEnded is called multiple times
@@ -233,9 +233,9 @@ contract Project {
         }
     }
 
-    /**
-        get total contributions view
-    */
+    //
+    //    get total contributions view
+    //
     function viewTotalContributions() external view returns(uint256 _currentBalance) {
         // if the project has been finished and has been payed out, the balance will be 0. 
         // in this case, return the logged balance
@@ -247,9 +247,9 @@ contract Project {
     }
 
 
-    /**
-        A view which returns all the information about a project
-    */
+    //
+    //   A view which returns all the information about a project
+    //
     function viewProject() external view returns(
         string memory _title,
         string memory _descr,
