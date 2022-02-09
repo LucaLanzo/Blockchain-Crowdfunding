@@ -4,11 +4,11 @@ import './footer.css'
 function Footer() {
   return <div className="bcsc__footer section__padding">
   <div className="bcsc__footer-heading">
-    <h1 className="gradient__text">Do you want to step in to the future before others</h1>
+    <h1 className="gradient__text">Looking for a job? We are looking for developers!</h1>
   </div>
 
   <div className="bcsc__footer-btn">
-    <p>Request Early Access</p>
+    <p><a href="https://youtu.be/yBLdQ1a4-JI?t=8" target="_blank">Join us now!</a></p>
   </div>
 
   <div className="bcsc__footer-links"> 
