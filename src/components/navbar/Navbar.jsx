@@ -18,7 +18,7 @@ function Navbar() {
   
   const connectWallet = () => {
     init().then(tx => {
-      console.log(tx);
+      // console.log(tx);
     }).catch(err => {
       console.log(err);
     })
