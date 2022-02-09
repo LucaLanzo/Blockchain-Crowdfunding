@@ -68,7 +68,7 @@ export const createNewProject = async (title, descr, goal, deadline) => {
   }
   
   crowdfundingContract.methods
-    .createNewProject(title, descr, web3.utils.toWei(goal, 'ether'), deadline)
+    .createNewProject(title, descr, goal, deadline)
     .send({
       from: selectedAccount
     })
@@ -103,9 +103,21 @@ export const getAllProjectContracts = async (projectAddresses) => {
   return projectContracts;
 }
 
+/*
+ * once subscribed, returns list of all project views
+ */
+export const getAllProjectViews = async (projectContracts) => {
+  let projectViews = [];
 
-export const getProjectView = async (projectContract) => {
-  return projectContract.methods.viewProject().call()
+  if (projectContracts !== 0) {
+    for (var i = 0; i < projectContracts.length; i++) {
+      projectViews.push(await projectContracts[i].methods.viewProject().call())
+    }
+  } else {
+    console.log("skip")
+  }
+  
+  return projectViews;
 }
 
 

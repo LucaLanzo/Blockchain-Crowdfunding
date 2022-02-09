@@ -1,6 +1,6 @@
 .bcsc__projectOverview {
     display: flex;
-    flex-direction: column;    
+    flex-direction: column;   
 }
 
 .bcsc__projectOverview-heading {
@@ -37,6 +37,7 @@
 
     .bcsc__projectOverview-container_group {
         margin: 2rem 0;
+
     }   
 
 }

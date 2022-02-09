@@ -7,8 +7,9 @@ import { init } from '../../web3/Web3Client'
 const Menu = () =>(
   <>
   <p><a href='#home'>Home</a></p>
-     <p><a href='#whatfund'>What is Blockfund?</a></p>
-     <p><a href='#project'>Projects</a></p>
+  <p><a href='#project'>Projects</a></p>
+  <p><a href='#whatfund'>What is Blockfund?</a></p>
+     
      </>
 )
 
