@@ -51,7 +51,6 @@ export const init = async () => {
  * Once subscribed, creates a new project with the given data
  */
 export const createNewProject = async (title, descr, goal, deadline) => {
-  console.log(!isInitialised);
   if (!isInitialised) {
     await init();
     return;
