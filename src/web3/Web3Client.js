@@ -122,6 +122,16 @@ export const getAllProjectViews = async (projectContracts) => {
 
 
 export const fund = async (projectContract, fundingAmount) => {
+  if (!isInitialised) {
+    await init();
+    return;
+  }
+  
+  if (projectContract == null) {
+    await init();
+    return;
+  }
+  
   projectContract.methods
   .fund()
   .send({
@@ -136,6 +146,17 @@ export const fund = async (projectContract, fundingAmount) => {
 }
 
 export const payout = async (projectContract) => {
+  if (!isInitialised) {
+    await init();
+    return;
+  }
+  
+  if (projectContract == null) {
+    await init();
+    return;
+  }
+  
+  
   projectContract.methods
   .payOut()
   .send({
@@ -149,6 +170,17 @@ export const payout = async (projectContract) => {
 }
 
 export const refund = async (projectContract) => {
+  if (!isInitialised) {
+    await init();
+    return;
+  }
+  
+  if (projectContract == null) {
+    await init();
+    return;
+  }
+  
+  
   projectContract.methods
   .refund()
   .send({
