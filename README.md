@@ -6,13 +6,13 @@ Includes a ReactJS frontend with a Web3 component to bridge the frontend with th
 
 ## How to use Blockfunding
 ### Smart Contract
-Start a Ganache instance and connect it to localhost:8545
-Use truffle to compile the smart contract and deploy it to the blockchain
-Import a couple of test accounts from Ganache to MetaMask
+Start a Ganache instance and connect it to localhost:8545.
+Use truffle to compile the smart contract and deploy it to the blockchain.
+Import a couple of test accounts from Ganache to MetaMask.
 
 ### Frontend
-Start the frontend using the react scripts or npm run start
-Once on the site, connect your wallet account/accounts with the website
+Start the frontend using the react scripts or npm run start.
+Once on the site, connect your wallet account/accounts with the website.
 
 The frontend is now ready
 
